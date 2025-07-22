@@ -11,19 +11,19 @@ module PathProxy
     def call(env)
       req = Rack::Request.new(env)
 
-      # 此时 SiteSetting 已可用
-      source_prefix = SiteSetting.path_proxy_source_prefix.chomp("/")
-      target_base   = SiteSetting.path_proxy_target_base
-      enabled       = SiteSetting.path_proxy_enabled
+      # 这里再读 Setting，保证 SiteSetting 已经加载
+      prefix  = SiteSetting.path_proxy_source_prefix.chomp("/")
+      target  = SiteSetting.path_proxy_target_base
+      enabled = SiteSetting.path_proxy_enabled
 
-      unless enabled && (req.path == source_prefix || req.path.start_with?(source_prefix + "/"))
+      unless enabled && (req.path == prefix || req.path.start_with?(prefix + "/"))
         return @app.call(env)
       end
 
-      Rails.logger.warn "[path_proxy] proxying #{req.fullpath} -> #{target_base}"
+      Rails.logger.warn "[path_proxy] proxying #{req.fullpath} -> #{target}"
 
-      target_uri  = URI(target_base)
-      backend_url = build_backend_url(req, source_prefix, target_base)
+      target_uri  = URI(target)
+      backend_url = build_backend_url(req, prefix, target)
 
       env["HTTP_HOST"]       = target_uri.host
       env["SERVER_PORT"]     = target_uri.port.to_s
@@ -38,10 +38,10 @@ module PathProxy
 
     private
 
-    def build_backend_url(req, source_prefix, target_base)
-      suffix = req.path.sub(source_prefix, "")
+    def build_backend_url(req, prefix, target)
+      suffix = req.path.sub(prefix, "")
       suffix = "/" if suffix.empty?
-      URI.join(target_base, suffix + (req.query_string.empty? ? "" : "?#{req.query_string}"))
+      URI.join(target, suffix + (req.query_string.empty? ? "" : "?#{req.query_string}"))
     end
   end
 end
