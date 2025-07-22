@@ -6,7 +6,7 @@
 # authors: You
 # url: https://www.example.com
 
-gem 'rack-proxy'
+gem 'rack-proxy', '0.7.6', require: 'rack/proxy'
 
 enabled_site_setting :path_proxy_enabled
 
