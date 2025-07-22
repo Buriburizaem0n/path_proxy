@@ -1,0 +1,10 @@
+default:
+  path_proxy_enabled:
+    default: true
+    client: false
+  path_proxy_source_prefix:
+    default: "/path"
+    client: false
+  path_proxy_target_base:
+    default: "http://127.0.0.1:8551"
+    client: false
