@@ -4,7 +4,6 @@
 # about: Proxy /path/* to an internal service
 # version: 0.1
 # authors: You
-# url: https://www.example.com
 
 gem 'rack-proxy', '0.7.6', require: 'rack/proxy'
 
@@ -12,14 +11,15 @@ enabled_site_setting :path_proxy_enabled
 
 after_initialize do
   require_relative "lib/path_proxy/middleware"
+end
 
-  if SiteSetting.path_proxy_enabled
-    # 在 Rails middleware 中插入
-    Discourse::Application.config.middleware.insert_before(
-      Rack::Head,
-      PathProxy::Middleware,
-      source_prefix: SiteSetting.path_proxy_source_prefix, # 例如 /path
-      target_base:   SiteSetting.path_proxy_target_base    # 例如 http://127.0.0.1:8551
-    )
-  end
+register_middleware do |middleware|
+  next unless SiteSetting.path_proxy_enabled
+
+  middleware.insert_before(
+    Rack::Head,
+    PathProxy::Middleware,
+    source_prefix: SiteSetting.path_proxy_source_prefix,
+    target_base:   SiteSetting.path_proxy_target_base
+  )
 end
