@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# name: path-proxy
+# name: path_proxy
 # about: Proxy /path/* to an internal service
 # version: 0.1
 # authors: You
