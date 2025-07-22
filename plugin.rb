@@ -6,6 +6,8 @@
 # authors: You
 # url: https://www.example.com
 
+gem 'rack-proxy', '~> 0.7'
+
 enabled_site_setting :path_proxy_enabled
 
 after_initialize do
