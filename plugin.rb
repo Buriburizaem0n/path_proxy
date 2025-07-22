@@ -4,7 +4,7 @@
 # version: 0.1
 # authors: You
 
-gem 'rack-proxy', '0.7.6', require: 'rack/proxy'  # 官方推荐在 plugin.rb 声明 gem。:contentReference[oaicite:1]{index=1}
+gem 'rack-proxy', '0.7.6', require: 'rack/proxy'
 
 require_relative "lib/path_proxy/middleware"
 
@@ -13,17 +13,13 @@ module ::PathProxy
     engine_name "path_proxy"
     isolate_namespace PathProxy
 
-    # 不要在这里用 SiteSetting
+    # 这里只挂中间件，不访问 SiteSetting
     config.before_initialize do |app|
-      app.middleware.insert_before(
-        0,
-        ::PathProxy::Middleware
-      )
+      app.middleware.insert_before(0, ::PathProxy::Middleware)
     end
   end
 end
 
-# 这里不再动 middleware
 after_initialize do
   # nothing
 end

@@ -11,7 +11,7 @@ module PathProxy
     def call(env)
       req = Rack::Request.new(env)
 
-      # 在这里再访问 SiteSetting，保证它已加载
+      # 此时 SiteSetting 已可用
       source_prefix = SiteSetting.path_proxy_source_prefix.chomp("/")
       target_base   = SiteSetting.path_proxy_target_base
       enabled       = SiteSetting.path_proxy_enabled
@@ -22,7 +22,7 @@ module PathProxy
 
       Rails.logger.warn "[path_proxy] proxying #{req.fullpath} -> #{target_base}"
 
-      target_uri = URI(target_base)
+      target_uri  = URI(target_base)
       backend_url = build_backend_url(req, source_prefix, target_base)
 
       env["HTTP_HOST"]       = target_uri.host
